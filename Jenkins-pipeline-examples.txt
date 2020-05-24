@@ -1,0 +1,95 @@
+https://www.jenkins.io/doc/book/pipeline/jenkinsfile/
+https://www.jenkins.io/doc/book/pipeline/
+
+========================================================
+
+pipeline {
+   agent any
+
+   stages {
+      stage('Hello') {
+         steps {
+            echo 'Hello World'
+         }
+      }
+   }
+}
+
+
+========================================================
+
+node {
+    sh "#!/bin/bash \n" + 
+       "echo \"Hello from \$SHELL\""
+}
+
+
+========================================================
+
+pipeline {
+    agent none
+
+    stages {
+
+        stage ('Hello') {
+            agent any
+
+            steps {
+                echo 'Hello, '
+
+                sh '''#!/bin/bash
+
+                    echo "Hello from bash"
+                    echo "Who I'm $SHELL"
+                '''
+            }
+        }
+    }
+}
+
+
+=========================================================
+
+pipeline {
+    agent any
+
+    stages {
+        stage('Build') {
+            steps {
+                echo 'Building..'
+            }
+        }
+        stage('Test') {
+            steps {
+                echo 'Testing..'
+            }
+        }
+        stage('Deploy') {
+            steps {
+                echo 'Deploying....'
+            }
+        }
+    }
+}
+
+
+=============================================================
+
+node()
+{
+    stage "Checkout Code"
+        checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/nvn17git/nvnshoppingcart']]])
+    
+    stage "Build Code"
+        sh "mvn clean package"
+        
+    stage "Deploy" 
+        sh "echo 'Hello world'"
+        sh 'sudo cp /var/lib/jenkins/workspace/pipeline-1/target/nvnshoppingcart.war /opt/war_files/'
+
+}
+
+
+=============================================================
+
+
